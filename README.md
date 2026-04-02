@@ -1,5 +1,5 @@
 # Neural-Network-from-Scratch
-Using only Python and NumPy, I built a framework for building MLP neural networks with tensors, automatic gradient descent and batch normalization. The file engine.py
+Using only Python and NumPy, I built a framework for building MLP neural networks with tensors, automatic back propagation and batch normalization. The file engine.py
 contains the tensor and layer classes as well as functions for calculating classification loss. Instead of something like PyTorch's nograd, I gave layers a predict method
 that computes forward passes without any computations for setting up gradient updates.
 
