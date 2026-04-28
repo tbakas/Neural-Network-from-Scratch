@@ -17,22 +17,6 @@ def get_sum_dimensions(input_shape, output_shape):
     return tuple(sum_dimensions)
 
 
-def get_topological_sort(tensor_object):
-    # This returns a list where child nodes are always before their parents for updating tensor gradients in the
-    # correct order.
-    
-    # This will empty each tensor's children sets, so you can't run it twice in a forward pass. But I'm not aware
-    # of any reason you would want to do that.
-    
-    topo_sort = []
-    children = tensor_object.children
-    while len(children) > 0:
-        child = children.pop()
-        topo_sort = topo_sort + get_topological_sort(child)
-    topo_sort.append(tensor_object)
-    return topo_sort
-
-
 class Tensor:
     def __init__(self, data, children=(), requires_grad=False):
         assert isinstance(data, numpy.ndarray), 'the data is not of type ndarray'
@@ -100,11 +84,27 @@ class Tensor:
         out._backward = backward
 
         return out
+        
+    def get_topological_sort(self):
+        # This returns a list where child nodes are always before their parents for updating tensor gradients in the
+        # correct order.
+        topo_sort = []
+        visited = set()
 
+        def build(t):
+            if t not in visited:
+                visited.add(t)
+                for child in t.children:
+                    build(child)
+                topo_sort.append(t)
+
+        build(self)
+        return topo_sort
+        
     def backward(self):
         # This determines a valid order for updating the gradients,
         # zeros gradients and updates each tensor's gradient
-        topo_sort = get_topological_sort(self)
+        topo_sort = self.get_topological_sort()
 
         for tensor_object in topo_sort[:-1]:
             tensor_object.zero_grad()
