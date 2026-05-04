@@ -187,7 +187,7 @@ class Linear:
         # One could add more complicated optimizers if desired.
         self.weights.data -= learning_rate * self.weights.grad
         if self.has_bias:
-        	self.bias.data -= learning_rate * self.bias.grad
+            self.bias.data -= learning_rate * self.bias.grad
 
     def predict(self, x):
         # Performs forward pass without any gradient computations. Used for testing.
