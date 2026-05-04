@@ -186,7 +186,8 @@ class Linear:
         # This updates the weights/biases of the layer using regular gradient descent.
         # One could add more complicated optimizers if desired.
         self.weights.data -= learning_rate * self.weights.grad
-        self.bias.data -= learning_rate * self.bias.grad
+        if self.has_bias:
+        	self.bias.data -= learning_rate * self.bias.grad
 
     def predict(self, x):
         # Performs forward pass without any gradient computations. Used for testing.
