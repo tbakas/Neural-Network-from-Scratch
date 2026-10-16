@@ -143,12 +143,12 @@ def classification_loss(logits, targets):
 
             
 def relu_no_grad(x):
-    # A relu activation without any gradient calculations for testing.
+    # A relu activation without any gradient calculations.
     return x.data * numpy.where(x.data >= 0, 1, 0)
 
 
 def predict_class(logits):
-    # Gives predictions of classifier without any gradient calculations for testing.
+    # Gives predictions of classifier without any gradient calculations.
     dummy = numpy.exp(logits.data - logits.data.max(axis=-1, keepdims=True))
     probabilities = dummy / dummy.sum(axis=-1, keepdims=True)
 
@@ -184,13 +184,12 @@ class Linear:
 
     def update(self, learning_rate):
         # This updates the weights/biases of the layer using regular gradient descent.
-        # One could add more complicated optimizers if desired.
         self.weights.data -= learning_rate * self.weights.grad
         if self.has_bias:
             self.bias.data -= learning_rate * self.bias.grad
 
     def predict(self, x):
-        # Performs forward pass without any gradient computations. Used for testing.
+        # Performs forward pass without any gradient computations.
         if self.has_bias:
             return Tensor(x.data @ self.weights.data + self.bias.data)
         else:
@@ -228,7 +227,7 @@ class BatchNorm1d:
         self.running_variance = numpy.ones(n_features)
 
     def forward(self, x):
-        # This should only can be used for training. Use predict for testing.
+        # This should only can be used during training.
         
         mean = x.data.mean(axis=0)
         variance = x.data.var(axis=0, ddof=1)
@@ -257,9 +256,6 @@ class BatchNorm1d:
         self.beta.data -= learning_rate * self.beta.grad
 
     def predict(self, x):
-        mean = self.running_mean
-        variance = self.running_variance
-
-        x_norm = (x.data - mean) / numpy.sqrt(variance + self.epsilon)
+        x_norm = (x.data - self.running_mean) / numpy.sqrt(self.running_variance + self.epsilon)
         y = self.gamma.data * x_norm + self.beta.data
         return Tensor(y)
