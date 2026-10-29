@@ -3,8 +3,6 @@ import numpy
 
 def get_sum_dimensions(input_shape, output_shape):
     # This determines what dimensions to sum over in backward pass when broadcasting occured in forward pass.
-    if input_shape == output_shape:
-        return ()
 
     n_input = len(input_shape)
     n_output = len(output_shape)
