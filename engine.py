@@ -147,10 +147,7 @@ def relu_no_grad(x):
 
 def predict_class(logits):
     # Gives predictions of classifier without any gradient calculations.
-    dummy = numpy.exp(logits.data - logits.data.max(axis=-1, keepdims=True))
-    probabilities = dummy / dummy.sum(axis=-1, keepdims=True)
-
-    return probabilities.argmax(axis=-1)
+    return logits.data.argmax(axis=-1)
 
 
 def predict_probabilities(logits):
